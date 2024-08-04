@@ -1,0 +1,825 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+
+  <style>
+    .info {
+      margin: 0 auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    .divTable {
+      display: table;
+      width: 100%;
+    }
+
+    .divTableRow {
+      display: table-row;
+    }
+
+    .divTableCell {
+      border: 1px solid #999999;
+      display: table-cell;
+      padding: 3px 10px;
+    }
+  </style>
+
+  <body>
+    <div class="info">
+      <p>
+        Setting up apps with WebView is <b>very easy</b> and does not require
+        any coding knowledge. Please take a look at this <b>overview</b> of the
+        built-in configuration options in <b>Config.java</b> file:
+      </p>
+      <p></p>
+      <div style="overflow-x: auto">
+        <div class="divTable">
+          <div class="divTableBody">
+            <div class="divTableRow" style="background-color: #eeeeee">
+              <div class="divTableCell">HOST</div>
+              <div class="divTableCell"><b>required value</b></div>
+              <div class="divTableCell">
+                Your domain host without https:// or http:// prefix (e.g.
+                "www.example.org"). By default, WebViewfor Android permits both
+                HTTPS content and HTTP content. However, if you prefer to
+                enhance app security by enabling only HTTPS content.
+              </div>
+            </div>
+            <div class="divTableRow" style="background-color: #eeeeee">
+              <div class="divTableCell">HOME_URL</div>
+              <div class="divTableCell"><b>required value</b></div>
+              <div class="divTableCell">
+                Your full WebView URL (e.g. "https://www.example.org/app.html")
+                which should be loaded in the WebView. By default, WebViewfor
+                Android permits both HTTPS content and HTTP content. However, if
+                you prefer to enhance app security by enabling only HTTPS
+                content.
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">USE_LOCAL_HTML_FOLDER</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to use local "index.html" HTML file instead
+                of remote WebView URL
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">
+                FALLBACK_USE_LOCAL_HTML_FOLDER_IF_OFFLINE
+              </div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> if you want to use the "local-html" folder if
+                the user is offline, and use the remote URL if the user is
+                online
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">ACTIVATE_PROGRESS_BAR</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> to disable the progress spinner/loading
+                spinner
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">PHONE_ORIENTATION</div>
+              <div class="divTableCell">value (orientation)</div>
+              <div class="divTableCell">
+                Set the phone orientation to either "portrait", "landscape", or
+                "auto"
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">TABLET_ORIENTATION</div>
+              <div class="divTableCell">value (orientation)</div>
+              <div class="divTableCell">
+                Set the tablet orientation to either "portrait", "landscape", or
+                "auto"
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">USER_AGENT</div>
+              <div class="divTableCell">optional</div>
+              <div class="divTableCell">
+                Define a customized UserAgent for web requests (or leave it
+                empty to use the default Android UserAgent)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">HARDWARE_ACCELERATION</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to activate Hardware Acceleration; it can
+                improve rendering performance but can also increase memory usage
+                and may cause compatibility issues with some content
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">APPEND_LANG_CODE</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> if you want to extend URL request by the
+                system language like ?webview_language=LANGUAGE CODE (e.g.,
+                ?webview_language=EN for English users)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">AUTO_REFRESH_ENABLED</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> if you want the WebView to automatically
+                refresh its contents when the app comes back to the foreground
+                from the background.
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">EXTERNAL_LINK_HANDLING_OPTIONS</div>
+              <div class="divTableCell"><b>0</b> or <b>1</b> or <b>2</b></div>
+              <div class="divTableCell">
+                Set to (0) to open external links in-app by default; (1) to
+                ALWAYS open in a new tab (an additional in-app browser); (2) to
+                ALWAYS open in another browser
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">BROWSER_WHITELIST</div>
+              <div class="divTableCell">List</div>
+              <div class="divTableCell">
+                Add domains here that should <b>always</b> be opened in the
+                external browser, regardless of what the
+                <b>EXTERNAL_LINK_HANDLING_OPTIONS</b> option is set to. To add
+                another domain, insert another host like so:
+                ["www.alwaysopeninchrome.com", "www.google.com"]. Please enter
+                the host exactly how you link to it (but never with the
+                inclusion of http/https)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">BROWSER_BLACKLIST</div>
+              <div class="divTableCell">List</div>
+              <div class="divTableCell">
+                Add domains here that should <b>never</b> be opened in the
+                external browser, regardless of what the
+                <b>EXTERNAL_LINK_HANDLING_OPTIONS</b> option is set to. To add
+                another domain, insert another host like so:
+                ["www.neveropeninchrome.com", "www.google.com"]. Please enter
+                the host exactly how you link to it (but never with the
+                inclusion of http/https)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SPECIAL_LINK_HANDLING_OPTIONS</div>
+              <div class="divTableCell"><b>0</b> or <b>1</b> or <b>2</b></div>
+              <div class="divTableCell">
+                Set to (0) to open special links in-app; (1) in a new tab (an
+                additional in-app browser); (2) in another browser; NOTE:
+                Special links have a "_blank" target or end with "#"; Overrides
+                <i>EXTERNAL_LINK_HANDLING_OPTIONS</i> if the link is also an
+                external link
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">ALWAYS_OPEN_IN_INAPP_TAB</div>
+              <div class="divTableCell">list</div>
+              <div class="divTableCell">
+                Add URL prefixes that you ALWAYS want to open in an in-app tab
+                (e.g., {"https://www.google.com",
+                "https://www.example.com/page"}), regardless of what the
+                <b>EXTERNAL_LINK_HANDLING_OPTIONS</b> is set to.
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">NEVER_OPEN_IN_INAPP_TAB</div>
+              <div class="divTableCell">list</div>
+              <div class="divTableCell">
+                Add URL prefixes that you NEVER want to open in an in-app tab
+                (e.g., {"https://www.google.com",
+                "https://www.example.com/page"}), regardless of what the
+                <b>EXTERNAL_LINK_HANDLING_OPTIONS</b> is set to.
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">QR_CODE_URL_OPTIONS</div>
+              <div class="divTableCell">
+                <b>0</b> or <b>1</b> or <b>2</b> or <b>3</b> or <b>4</b>
+              </div>
+              <div class="divTableCell">
+                Set to (0) to open a scanned QR code URL in the app; (1) in an
+                in-app tab; (2) in a new browser; (3) in an in-app tab if
+                external; (4) in a new browser if external
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">CLEAR_CACHE_ON_STARTUP</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to clear the WebView cache &amp; cookies on
+                each app startup and do not use cached versions of your web
+                app/website
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">CLEAR_CACHE_ON_EXIT</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> o clear WebView cache &amp; cookies upon full
+                app exit (you might also want to activate
+                <i>CLEAR_CACHE_ON_STARTUP</i>, as system differences could
+                affect reliability)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">IS_DEEP_LINKING_ENABLED</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to enable deep-linking
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">
+                OPEN_NOTIFICATION_URLS_IN_SYSTEM_BROWSER
+              </div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to open the notification deep linking URLs in
+                the system browser instead of your app
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SPLASH_SCREEN_ACTIVATED</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to activate the splash screen
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SPLASH_TIMEOUT</div>
+              <div class="divTableCell">number value (milliseconds)</div>
+              <div class="divTableCell">
+                Set the splash screen timeout in <i>milliseconds</i> (the
+                loading sign screen will show after this time duration if the
+                home URL still has some loading to do)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">REMAIN_SPLASH_OPTION</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to show the splash screen until the home URL
+                has finished loading (overrides <i>SPLASH_TIMEOUT</i>)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SCALE_SPLASH_IMAGE</div>
+              <div class="divTableCell">percentage value [0-100]</div>
+              <div class="divTableCell">
+                Set the splash screen image size with respect to the device's
+                smallest width/height; range in percentage [0-100]; Caution:
+                value = 0 will hide the image completely
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">blackStatusBarText</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> for black status bar text; Set to
+                <i>false</i> for white status bar text; Use 'colorPrimaryDark'
+                in style.xml to choose the status bar background color
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">enableBioMetricAuth</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to enable App Lock (biometric authentication)
+                for the app
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">PREVENT_SLEEP</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to prevent the device from going into sleep
+                while the app is active
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">ENABLE_SWIPE_NAVIGATE</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to enable navigation by swiping left or right
+                to move back or forward a page
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">ENABLE_PULL_REFRESH</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to enable swiping down to refresh the page
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">HIDE_VERTICAL_SCROLLBAR</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to hide the vertical scrollbar
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">HIDE_HORIZONTAL_SCROLLBAR</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to hide the horizontal scrollbar
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">ENABLE_ZOOM</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> to prevent zoom functionalities for the app
+                user (works by additionally using script injection)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">DISABLE_DARK_MODE</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to disable dark mode (not working on all
+                launchers)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">HIDE_NAVIGATION_BAR_IN_LANDSCAPE</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to hide the navigation bar when in landscape
+                mode
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">MAX_TEXT_ZOOM</div>
+              <div class="divTableCell">number value (text scale integer)</div>
+              <div class="divTableCell">
+                Set to a value greater than 0 to define a maximum text zoom; Set
+                to (0) to disable this feature. <br /><i
+                  >Note: Small = 85, Default = 100, Large = 115, Largest =
+                  130</i
+                >
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">EXIT_APP_BY_BACK_BUTTON_ALWAYS</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to close the app by pressing the hardware
+                back button (instead of going back to the last page)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">EXIT_APP_BY_BACK_BUTTON_HOMEPAGE</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to close the app by pressing the hardware
+                back button if the user is on the home page (which does not
+                allow going to a prior page)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">EXIT_APP_DIALOG</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to ask the user if they want to exit before
+                exiting the app
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">OFFLINE_SCREEN_BACKGROUND_COLOR</div>
+              <div class="divTableCell">hex color code</div>
+              <div class="divTableCell">
+                Set the color of the offline screen background using the Hex
+                Color Code (e.g., "#ffffff" = White)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">PREVENT_SCREEN_CAPTURE</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to prevent users from taking screenshots or
+                screen recordings in the app
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">UUID_ENHANCE_WEBVIEW_URL</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to add the UUID parameter 'uuid=XYZ' to the
+                first URL request
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">
+                BLOCK_SELF_SIGNED_AND_FAULTY_SSL_CERTS
+              </div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to block content signed with self-signed SSL
+                (user) certificates &amp; faulty SSL certificates.
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">BLOCK_ROOTED_DEVICES</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to enable the app's functionality to detect
+                rooted devices and disable itself on them (Note: Root detection
+                is not always reliable and may not work on all devices)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">LINK_DRAG_AND_DROP</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> to disable link drag and drop
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">LANDSCAPE_FULLSCREEN_VIDEO</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to always present fullscreen videos in
+                landscape mode
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SHOW_FIRSTRUN_DIALOG</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> to disable the First Run Dialog
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SHOW_FACEBOOK_DIALOG</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> to disable the Follow On Facebook Dialog
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SHOW_RATE_DIALOG</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> to disable the Rate This App Dialog
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">RATE_DAYS_UNTIL_PROMPT</div>
+              <div class="divTableCell">number value (days)</div>
+              <div class="divTableCell">
+                Set the minimum number of days to be passed after the
+                application is installed before the "Rate this app" dialog is
+                displayed
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">RATE_LAUNCHES_UNTIL_PROMPT</div>
+              <div class="divTableCell">number value (launches)</div>
+              <div class="divTableCell">
+                Set the minimum number of application launches before the "Rate
+                this app" dialog is displayed
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">FACEBOOK_DAYS_UNTIL_PROMPT</div>
+              <div class="divTableCell">number value (days)</div>
+              <div class="divTableCell">
+                Set the minimum number of days to be passed after the
+                application is installed before the "Follow on Facebook" dialog
+                is displayed
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">FACEBOOK_LAUNCHES_UNTIL_PROMPT</div>
+              <div class="divTableCell">number value (launches)</div>
+              <div class="divTableCell">
+                Set the minimum number of application launches before the "Rate
+                this app" dialog is displayed
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">FACEBOOK_URL</div>
+              <div class="divTableCell">value (URL)</div>
+              <div class="divTableCell">Set the URL of your Facebook site</div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">ALLOW_IMAGE_DOWNLOAD</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> to prevent the "Download images" pop-up box
+                from appearing when long-pressing on an image
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">PUSH_ENABLED</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to activate OneSignal Push (set OneSignal IDs
+                in the build.gradle file)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">PUSH_ENHANCE_WEBVIEW_URL</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> if you want to extend WebView Main URL
+                requests by the OneSignal user id in the ?onesignal_push_id=XYZ
+                format (alternatively and additionally, you can always request
+                the OneSignal user id by calling
+                <a href="#onesignalruntime">getonesignalplayerid://</a>)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">PUSH_RELOAD_ON_USERID</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> if WebView should be reloaded when the app
+                gets a UserID from OneSignal (set the OneSignal IDs in the
+                build.gradle file)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">FIREBASE_PUSH_ENABLED</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to activate Firebase Push (replace
+                google-services.json before)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">FIREBASE_PUSH_ENHANCE_WEBVIEW_URL</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> if you want to extend URL request by
+                ?firebase_push_id=XYZ (alternatively and additionally, you can
+                always request the OneSignal user id by calling
+                <a href="#firebaseruntime">getfirebaseplayerid://</a>)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">PUSHWOOSH_ENABLED</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to activate Pushwoosh Push (set the Pushwoosh
+                credentials in the AndroidManifest.xml &amp; string.xml files)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">PUSHWOOSH_ENHANCE_WEBVIEW_URL</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> if you want to extend URL request by
+                ?pushwoosh_id=XYZ (set the Pushwoosh credentials in the
+                AndroidManifest.xml &amp; string.xml files)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SHOW_ADSENSE_AD</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to enable support for AdSense web ads
+                (independent of AdMob ads)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SHOW_BANNER_AD</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> if you want to display AdMob banner ads (set
+                the AdMob IDs in the strings.xml file)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SHOW_FULL_SCREEN_AD</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> if you want to display AdMob fullscreen
+                interstitial ads after X website clicks (set the AdMob IDs in
+                the strings.xml file)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">SHOW_AD_AFTER_X</div>
+              <div class="divTableCell">value (website reloads)</div>
+              <div class="divTableCell">
+                Set the number X of website clicks for AdMob interstitial ads
+                (set the AdMob IDs in the strings.xml file)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">INCREMENT_WITH_TAPS</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to allow normal screen taps to increment
+                SHOW_AD_AFTER_X
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">USE_FACEBOOK_ADS</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to use Facebook Audience Network ads instead
+                of AdMob ads (set the Ad IDs in the strings.xml file)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">ENABLE_REWARDED_ADS</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to enable AdMob rewarded ads. Required to be
+                <i>true</i> even for manual activation of ads.(set the Ad IDs in
+                the strings.xml file)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">USE_REWARDED_ADS_WHERE_POSSIBLE</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to display admob rewarded ads instead of
+                admob interstitial ads, i.e after x taps etc. Keep as
+                <i>false</i> if their activation should be handled via your
+                website's code. Note, this requires SHOW_FULL_SCREEN_AD to also
+                be set to <i>true</i>, in order to overwrite them.
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">AD_TRIGGER_URLS</div>
+              <div class="divTableCell">optional</div>
+              <div class="divTableCell">
+                Add page trigger words here, presence in a URL triggers
+                interstitial ads (e.g., "thanks.html", "welcome.html",
+                "/thank-you/", "next-step.php")
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">downloadableExtension</div>
+              <div class="divTableCell">list</div>
+              <div class="divTableCell">
+                Add the file formats that should trigger the file downloader
+                functionality (e.g., .pdf, .docx, ...)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">GOOGLE_LOGIN_HELPER_TRIGGERS</div>
+              <div class="divTableCell">list</div>
+              <div class="divTableCell">
+                Define the URL prefixes that load during Google login for your
+                website; acts as a trigger for the helper
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">FACEBOOK_LOGIN_HELPER_TRIGGERS</div>
+              <div class="divTableCell">list</div>
+              <div class="divTableCell">
+                Define the URL prefixes that load during Facebook login for your
+                website; acts as a trigger for the helper
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">HOME_URL_LOGOUT</div>
+              <div class="divTableCell">value (URL)</div>
+              <div class="divTableCell">
+                Define the URL for logout to clear login cookies (optional)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">MANUAL_COOKIE_SYNC</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>true</i> to enable the Manual Cookie Sync tool. To be
+                used if you require cookies to be synced <i>under</i> every 30
+                seconds or if something cookie-related does not work otherwise.
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">COOKIE_SYNC_TIME</div>
+              <div class="divTableCell">number value (milliseconds)</div>
+              <div class="divTableCell">
+                Define how often the cookies should sync with the app in
+                milliseconds (ms)
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">MANUAL_COOKIE_SYNC_TRIGGERS</div>
+              <div class="divTableCell">list</div>
+              <div class="divTableCell">
+                Define the URL prefixes you want to use the Manual Cookie Sync
+                tool on. If MANUAL_COOKIE_SYNC_TRIGGERS is empty, it will
+                automatically check every page. Example:
+                {"https://example.com/login", "https://example.com/data"}
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">requireLocation</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> if you do NOT require location services/GPS
+                coordinates; don't forget to also remove relevant entries in
+                <i>AndroidManifest.xml</i> if you want to ensure the complete
+                removal of the permission capability for the app; also see
+                <a href="#geolocation">usage of background (!) location</a>
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">requireStorage</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> if you do NOT require APIs related to
+                downloads or uploads; don't forget to also remove relevant
+                entries in <i>AndroidManifest.xml</i> if you want to ensure the
+                complete removal of the permission capability for the app
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">requireCamera</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> if you do NOT require APIs related to camera
+                images / camera videos; don't forget to also remove relevant
+                entries in <i>AndroidManifest.xml</i> if you want to ensure the
+                complete removal of the permission capability for the app
+              </div>
+            </div>
+            <div class="divTableRow">
+              <div class="divTableCell">requireRecordAudio</div>
+              <div class="divTableCell"><b>true</b> or <b>false</b></div>
+              <div class="divTableCell">
+                Set to <i>false</i> if you do NOT require APIs related to
+                recording audio; don't forget to also remove relevant entries in
+                <i>AndroidManifest.xml</i> if you want to ensure the complete
+                removal of the permission capability for the app
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <br /><br />Open <b>strings.xml</b> file to edit app name &amp; text
+      strings:<br /><br /><a
+        data-fancybox="gallery"
+        href="assets/img/strings.webp"
+        ><img
+          src="assets/img/strings.webp"
+          alt="string.xml file for editing text captions"
+          height="400px"
+      /></a>
+      <br /><br /><b>Multi-language apps:</b> To edit translations – including
+      the default German and Spanish ones – or to create new, additional
+      translations for these strings, right-click on the "strings" folder in
+      Android Studio and select "Open Translations Editor":<br /><br /><a
+        data-fancybox="gallery"
+        href="assets/img/translations.webp"
+        ><img
+          src="assets/img/translations.webp"
+          alt="Multi-language support for your WebView app on Android"
+          width="600px"
+      /></a>
+      <br /><br />Open <b>dimens.xml</b> file to modify text formatting:<br /><br /><br /><a
+        data-fancybox="gallery"
+        href="assets/img/screenshot_Dimens.webp"
+        ><img
+          src="assets/img/screenshot_Dimens.webp"
+          alt="Use dimens.xml to resize objects and text"
+          width="600px" /></a
+      ><br /><br />
+      <p id="icon">&nbsp;</p>
+      <hr />
+      <h3 id="iconsection"><strong>3) Change the App Icon</strong></h3>
+      <p>
+        <a data-fancybox="gallery" href="assets/img/screenshot_Icon.webp"
+          ><img
+            src="assets/img/screenshot_Icon.webp"
+            width="250px"
+            alt="Android App Icon" /></a
+        ><br />
+        A beautiful app icon is a perfect first impression for your customers.
+        It's easy to add your app icon to your WebViewproject: Make a
+        right-click on each ic_launcher.png size (from hdpi to xxxhdpi) and
+        click "Reveal in Finder" (Mac) or "Reveal in Explorer" (Windows).
+        Replace the file with your icon. Alternatively, use this helpful tool:
+        <a
+          href="https://jgilfelt.github.io/AndroidAssetStudio/icons-launcher.html"
+          target="_blank"
+          ><b>Launcher Icon Generator</b></a
+        >
+        (we are not affiliated with the developer company).<br />
+      </p>
+    </div>
+  </body>
+</html>
