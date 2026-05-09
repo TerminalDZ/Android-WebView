@@ -109,19 +109,19 @@ dependencies {
     implementation 'androidx.core:core-splashscreen:1.0.1'
     implementation 'androidx.biometric:biometric:1.1.0'
     // Lifecycle 2.6.2 — stable across all the SDKs we pull in (firebase, pushwoosh, onesignal v4)
-    implementation 'androidx.lifecycle:lifecycle-process:2.6.2'
-    implementation 'androidx.lifecycle:lifecycle-runtime:2.6.2'
-    implementation 'androidx.lifecycle:lifecycle-common-java8:2.6.2'
+    implementation 'androidx.lifecycle:lifecycle-process:2.10.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime:2.10.0'
+    implementation 'androidx.lifecycle:lifecycle-common-java8:2.10.0'
 
     // Force-align every transitively pulled lifecycle artifact to the same version
     // so ProcessLifecycleInitializer can find ReportFragment$ActivityInitializationListener.
     constraints {
-        implementation('androidx.lifecycle:lifecycle-livedata:2.6.2')
-        implementation('androidx.lifecycle:lifecycle-livedata-core:2.6.2')
-        implementation('androidx.lifecycle:lifecycle-viewmodel:2.6.2')
-        implementation('androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.2')
-        implementation('androidx.lifecycle:lifecycle-runtime-ktx:2.6.2')
-        implementation('androidx.lifecycle:lifecycle-common:2.6.2')
+        implementation('androidx.lifecycle:lifecycle-livedata:2.10.0')
+        implementation('androidx.lifecycle:lifecycle-livedata-core:2.10.0')
+        implementation('androidx.lifecycle:lifecycle-viewmodel:2.10.0')
+        implementation('androidx.lifecycle:lifecycle-viewmodel-savedstate:2.10.0')
+        implementation('androidx.lifecycle:lifecycle-runtime-ktx:2.10.0')
+        implementation('androidx.lifecycle:lifecycle-common:2.10.0')
     }
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
     implementation 'androidx.webkit:webkit:1.12.1'
