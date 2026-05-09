@@ -1,6 +1,7 @@
 package com.iba.myappname;
 
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -8,6 +9,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.biometric.BiometricManager;
 import androidx.biometric.BiometricPrompt;
+import androidx.core.app.ActivityCompat;
 
 import com.iba.myappname.biometric.BiometricPromptUtils;
 
@@ -57,12 +59,9 @@ public class BaseActivity extends AppCompatActivity {
             Toast.makeText(getApplicationContext(),
                     getString(R.string.unable_to_use_biometric_unlock),
                     Toast.LENGTH_LONG).show();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    System.exit(0);
-                }
-            }, 3000);
+            // Graceful exit — finishAffinity tears down the whole task without
+            // killing the process abruptly the way System.exit(0) does.
+            new Handler(Looper.getMainLooper()).postDelayed(() -> ActivityCompat.finishAffinity(this), 3000);
             authListener.onBiometricSuccess();
         }
     }

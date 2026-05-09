@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Lint baseline. Regenerate after each large refactor with:
+        ./gradlew :app:updateLintBaseline
+
+    Treat newly introduced warnings as build failures (`abortOnError true`),
+    but accept the historical noise listed below as known debt.
+-->
+<issues format="6" by="iba-bootstrap">
+</issues>

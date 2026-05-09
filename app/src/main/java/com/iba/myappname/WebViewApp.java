@@ -18,6 +18,7 @@ import androidx.multidex.MultiDexApplication;
 import com.facebook.ads.AdSettings;
 import com.facebook.ads.AudienceNetworkAds;
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.material.color.DynamicColors;
 import com.google.firebase.FirebaseApp;
 import com.onesignal.OSNotificationOpenedResult;
 import com.onesignal.OneSignal;
@@ -34,6 +35,11 @@ public class WebViewApp extends MultiDexApplication {
     public void onCreate() {
         super.onCreate();
         context = this;
+
+        // Material 3 dynamic color (Android 12+) — opt-in via Config.
+        if (Config.USE_MATERIAL3_DYNAMIC_COLOR) {
+            DynamicColors.applyToActivitiesIfAvailable(this);
+        }
 
         setupActivityListener();
         initFirebase();

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Auto-Backup rules (Android 6 to 11). Excludes any file that holds purchase
+    proofs, encrypted preferences, or auth tokens, since restoring them onto a
+    different device would be a privacy hazard.
+-->
+<full-backup-content>
+    <exclude domain="sharedpref" path="purchase_prefs.xml" />
+    <exclude domain="sharedpref" path="rate_prefs.xml" />
+    <exclude domain="sharedpref" path="secure_prefs.xml" />
+    <exclude domain="database" path="iba_webview.db" />
+    <exclude domain="file" path="auth_token" />
+</full-backup-content>

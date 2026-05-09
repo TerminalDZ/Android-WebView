@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "xxxxxxxxxxx",
         "android_client_info": {
-          "package_name": "com.webviewgold.myappname"
+          "package_name": "com.iba.webview"
         }
       },
       "oauth_client": [

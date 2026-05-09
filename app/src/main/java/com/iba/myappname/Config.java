@@ -7,7 +7,7 @@ public class Config {
 
 
     /**
-     * Main Configuration Of Your WebViewGold App
+     * Main Configuration Of Your IBA WebView App
      */
     // Domain host and subdomain without any https:// or http:// prefixes (e.g., "www.example.org")
     public static final String HOST = "www.example.org";
@@ -146,7 +146,7 @@ public class Config {
     // Set to "true" to add the UUID parameter 'uuid=XYZ' to the first URL request
     public static final boolean UUID_ENHANCE_WEBVIEW_URL = false;
 
-    //Set to "true" to block content signed with self-signed SSL (user) certificates & faulty SSL certificates; maybe consider blocking all Non-HTTPS content, see https://www.webviewgold.com/support-center/knowledgebase/how-to-prevent-non-https-connections-in-webviewgold-for-android-switching-usescleartexttraffic-from-true-to-false/
+    //Set to "true" to block content signed with self-signed SSL (user) certificates & faulty SSL certificates. Consider also setting android:usesCleartextTraffic="false" in AndroidManifest.xml to enforce HTTPS-only traffic.
     public static boolean BLOCK_SELF_SIGNED_AND_FAULTY_SSL_CERTS = false;
 
     // Set to "true" to enable the app's functionality to detect rooted devices and disable itself on them (Note: Root detection is not always reliable and may not work on all devices)
@@ -281,6 +281,51 @@ public class Config {
     // Define the URL prefixes you want to use the Manual Cookie Sync tool on
     // Note: If MANUAL_COOKIE_SYNC_TRIGGERS is empty, it will automatically check every page
     public static String[] MANUAL_COOKIE_SYNC_TRIGGERS = {}; //Example: {"https://example.com/login", "https://example.com/data"}
+
+    /**
+     * JavaScript Native Bridge
+     *
+     * When enabled, exposes a {@code window.IBA} object to web pages with
+     * methods such as {@code IBA.toast(msg)}, {@code IBA.share(url, title)},
+     * {@code IBA.vibrate(ms)}, {@code IBA.copy(text)}, {@code IBA.openExternal(url)},
+     * {@code IBA.deviceInfo()}, {@code IBA.reload()}, and {@code IBA.close()}.
+     *
+     * Disable for sites that you don't fully trust to avoid widening the
+     * attack surface — JavaScript interfaces can be invoked by any frame.
+     */
+    public static final boolean ENABLE_NATIVE_BRIDGE = true;
+
+    /**
+     * PWA-style asset loading via WebViewAssetLoader.
+     *
+     * When enabled, requests under https://appassets.iba/assets/ are served
+     * directly from the bundled APK assets folder, bypassing the network and
+     * giving native PWA-like offline behavior.
+     */
+    public static final boolean ENABLE_ASSET_LOADER = true;
+    public static final String  ASSET_LOADER_DOMAIN = "appassets.iba";
+
+    /**
+     * Read the website's <meta name="theme-color"> after each page load and
+     * apply the value to the system status bar.
+     */
+    public static final boolean SYNC_THEME_COLOR_FROM_WEB = true;
+
+    /**
+     * When true, MainActivity uses Play Integrity API as a stronger root /
+     * tamper signal in addition to the legacy heuristic check. Requires you
+     * to enable Play Integrity in Google Play Console for the app.
+     */
+    public static final boolean USE_PLAY_INTEGRITY = false;
+    /** Cloud Project Number for Play Integrity. Take it from Google Cloud → Project Settings. */
+    public static final long PLAY_INTEGRITY_CLOUD_PROJECT_NUMBER = 0L;
+
+    /**
+     * Material 3 dynamic-color theme overlay. When enabled and the device
+     * runs Android 12+, the AppCompatActivity colors derive from the user's
+     * wallpaper.
+     */
+    public static final boolean USE_MATERIAL3_DYNAMIC_COLOR = false;
 
     /**
      * Android Permission Options

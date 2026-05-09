@@ -76,7 +76,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.HapticFeedbackConstants;
 import android.webkit.CookieManager;
-import android.webkit.CookieSyncManager;
 import android.webkit.GeolocationPermissions;
 import android.webkit.HttpAuthHandler;
 import android.webkit.JsPromptResult;
@@ -127,7 +126,9 @@ import com.android.billingclient.api.Purchase;
 import com.android.billingclient.api.PurchasesUpdatedListener;
 import com.android.billingclient.api.SkuDetails;
 import com.android.billingclient.api.SkuDetailsParams;
-import com.blikoon.qrcodescanner.QrCodeActivity;
+import com.journeyapps.barcodescanner.ScanContract;
+import com.journeyapps.barcodescanner.ScanIntentResult;
+import com.journeyapps.barcodescanner.ScanOptions;
 import com.facebook.ads.AdSize;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -314,7 +315,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(this);
         String ret = settings.getString("disableAdMobDone", "default");
 
-        if (ret == "removed") {
+        if ("removed".equals(ret)) {
             disableAdMob = true;
         }
 
@@ -875,6 +876,23 @@ public class MainActivity extends AppCompatActivity
         webSettings.setDatabaseEnabled(true);
         webSettings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
 
+        // Expose window.IBA bridge to JavaScript when enabled in Config
+        if (Config.ENABLE_NATIVE_BRIDGE) {
+            com.iba.myappname.bridge.NativeBridge.attach(this, webView);
+        }
+
+        // Auto-enable algorithmic darkening on Android 13+ when the system is in dark mode.
+        // Lets unmodified websites render with a darker palette to match the device theme.
+        if (!DISABLE_DARK_MODE
+                && androidx.webkit.WebViewFeature.isFeatureSupported(
+                        androidx.webkit.WebViewFeature.ALGORITHMIC_DARKENING)) {
+            int nightFlag = getResources().getConfiguration().uiMode
+                    & Configuration.UI_MODE_NIGHT_MASK;
+            if (nightFlag == Configuration.UI_MODE_NIGHT_YES) {
+                androidx.webkit.WebSettingsCompat.setAlgorithmicDarkeningAllowed(webSettings, true);
+            }
+        }
+
         // Custom Text Zoom
         if (MAX_TEXT_ZOOM > 0) {
             float systemTextZoom = getResources().getConfiguration().fontScale * 100;
@@ -885,29 +903,29 @@ public class MainActivity extends AppCompatActivity
 
         // Phone orientation setting for Android 8 (Oreo)
         if (webSettings.getUserAgentString().contains("Mobile") && android.os.Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
-            if (Config.PHONE_ORIENTATION == "auto") {
+            if ("auto".equals(Config.PHONE_ORIENTATION)) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
-            } else if (Config.PHONE_ORIENTATION == "portrait") {
+            } else if ("portrait".equals(Config.PHONE_ORIENTATION)) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
-            } else if (Config.PHONE_ORIENTATION == "landscape") {
+            } else if ("landscape".equals(Config.PHONE_ORIENTATION)) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_LANDSCAPE);
             }
             // Phone orientation setting for all other Android versions
         } else if (webSettings.getUserAgentString().contains("Mobile")) {
-            if (Config.PHONE_ORIENTATION == "auto") {
+            if ("auto".equals(Config.PHONE_ORIENTATION)) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
-            } else if (Config.PHONE_ORIENTATION == "portrait") {
+            } else if ("portrait".equals(Config.PHONE_ORIENTATION)) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            } else if (Config.PHONE_ORIENTATION == "landscape") {
+            } else if ("landscape".equals(Config.PHONE_ORIENTATION)) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
             // Tablet/Other orientation setting
         } else {
-            if (Config.TABLET_ORIENTATION == "auto") {
+            if ("auto".equals(Config.TABLET_ORIENTATION)) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
-            } else if (Config.TABLET_ORIENTATION == "portrait") {
+            } else if ("portrait".equals(Config.TABLET_ORIENTATION)) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-            } else if (Config.TABLET_ORIENTATION == "landscape") {
+            } else if ("landscape".equals(Config.TABLET_ORIENTATION)) {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             }
         }
@@ -965,6 +983,32 @@ public class MainActivity extends AppCompatActivity
         } else {
             stopService(backgroundLocationIntent);
         }
+    }
+
+    /**
+     * Modern QR launcher — replaces the deprecated blikoon Activity flow.
+     * Routes valid URLs through {@link #loadQRCodeURL(String)} so the existing
+     * QR_CODE_URL_OPTIONS routing keeps working unchanged.
+     */
+    private final ActivityResultLauncher<ScanOptions> qrScanLauncher =
+            registerForActivityResult(new ScanContract(), (ScanIntentResult result) -> {
+                if (result == null || result.getContents() == null) return;
+                String contents = result.getContents();
+                if (URLUtil.isValidUrl(contents)) {
+                    loadQRCodeURL(contents);
+                } else {
+                    Toast.makeText(this, contents, Toast.LENGTH_LONG).show();
+                }
+            });
+
+    private void launchQrScanner() {
+        ScanOptions options = new ScanOptions()
+                .setDesiredBarcodeFormats(ScanOptions.QR_CODE)
+                .setPrompt("Scan a QR code")
+                .setBeepEnabled(true)
+                .setOrientationLocked(false)
+                .setBarcodeImageEnabled(false);
+        qrScanLauncher.launch(options);
     }
 
     private final ActivityResultLauncher<String> requestPermissionLauncher =
@@ -1261,6 +1305,18 @@ public class MainActivity extends AppCompatActivity
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
+        // Voice search result → forward to web via NativeBridge.
+        if (requestCode == com.iba.myappname.bridge.NativeBridge.REQ_VOICE_SEARCH) {
+            if (resultCode == Activity.RESULT_OK && intent != null) {
+                java.util.ArrayList<String> results = intent.getStringArrayListExtra(
+                        android.speech.RecognizerIntent.EXTRA_RESULTS);
+                if (results != null && !results.isEmpty() && webView != null) {
+                    com.iba.myappname.bridge.NativeBridge.handleVoiceResult(webView, results.get(0));
+                }
+            }
+            return;
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (requestCode == REQUEST_SELECT_FILE) {
                 if (uploadMessage == null)
@@ -1350,16 +1406,8 @@ public class MainActivity extends AppCompatActivity
             }
             mUMA.onReceiveValue(results);
             mUMA = null;
-        } else if (requestCode == REQUEST_CODE_QR_SCAN) {
-            if (resultCode == Activity.RESULT_OK) {
-                if (intent != null) {
-                    String result = intent.getStringExtra("com.blikoon.qrcodescanner.got_qr_scan_relult");
-                    if (result != null && URLUtil.isValidUrl(result)) {
-                        loadQRCodeURL(result);
-                    }
-                }
-            }
         }
+        // QR scan results now flow through `qrScanLauncher` (ZXing ScanContract).
         /* else {
             super.handleActivityResult(requestCode, resultCode, intent);
         }*/
@@ -1927,8 +1975,7 @@ public class MainActivity extends AppCompatActivity
             // If request is cancelled, the result arrays are empty.
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Permission was granted, start the activity
-                Intent i = new Intent(MainActivity.this, QrCodeActivity.class);
-                startActivityForResult(i, REQUEST_CODE_QR_SCAN);
+                launchQrScanner();
             } else {
                 // Permission denied, you can disable the functionality that depends on this permission.
                 Toast.makeText(this, "Camera permission is required for scanning QR Code", Toast.LENGTH_SHORT).show();
@@ -2487,9 +2534,25 @@ public class MainActivity extends AppCompatActivity
 
         private Handler notificationHandler;
 
+        /** Lazily initialized PWA-style asset loader (see Config.ENABLE_ASSET_LOADER). */
+        private androidx.webkit.WebViewAssetLoader assetLoader;
+
         public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback) {
             requestLocationPermission(origin, callback);
 //            callback.invoke(origin, true, false);
+        }
+
+        @Override
+        public android.webkit.WebResourceResponse shouldInterceptRequest(WebView view,
+                                                                          android.webkit.WebResourceRequest request) {
+            if (Config.ENABLE_ASSET_LOADER) {
+                if (assetLoader == null) {
+                    assetLoader = com.iba.myappname.webview.WebAssetLoaderFactory.create(MainActivity.this);
+                }
+                android.webkit.WebResourceResponse response = assetLoader.shouldInterceptRequest(request.getUrl());
+                if (response != null) return response;
+            }
+            return super.shouldInterceptRequest(view, request);
         }
 
         @Override
@@ -2581,18 +2644,8 @@ public class MainActivity extends AppCompatActivity
 
             // Logout tool
             if (url.startsWith(Config.HOME_URL_LOGOUT) && (Config.HOME_URL_LOGOUT.length() != 0)) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                    CookieManager.getInstance().removeAllCookies(null);
-                    CookieManager.getInstance().flush();
-                } else if (mContext != null) {
-                    CookieSyncManager cookieSyncManager = CookieSyncManager.createInstance(mContext);
-                    cookieSyncManager.startSync();
-                    CookieManager cookieManager = CookieManager.getInstance();
-                    cookieManager.removeAllCookie();
-                    cookieManager.removeSessionCookie();
-                    cookieSyncManager.stopSync();
-                    cookieSyncManager.sync();
-                }
+                CookieManager.getInstance().removeAllCookies(null);
+                CookieManager.getInstance().flush();
             }
 
             // Scanning mode
@@ -3103,6 +3156,22 @@ public class MainActivity extends AppCompatActivity
                     SplashScreen.getInstance().finish();
                     SPLASH_SCREEN_ACTIVE = false;
                 }
+
+                // Sync the system status bar color with the page's <meta name="theme-color">.
+                if (Config.SYNC_THEME_COLOR_FROM_WEB) {
+                    final String script =
+                            "(function(){var m=document.querySelector('meta[name=\"theme-color\"]');"
+                          + "return m?m.content:null;})()";
+                    view.evaluateJavascript(script, value -> {
+                        if (value == null || "null".equals(value)) return;
+                        try {
+                            String colorString = value.replace("\"", "");
+                            int color = Color.parseColor(colorString);
+                            getWindow().setStatusBarColor(color);
+                        } catch (IllegalArgumentException ignored) { /* invalid color */ }
+                    });
+                }
+
                 showInterstitial();
                 super.onPageFinished(view, url);
             }
@@ -3178,9 +3247,8 @@ public class MainActivity extends AppCompatActivity
                                 // Permission is not granted, request for permission
                                 ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, 1402);
                             } else {
-                                // Permission has already been granted, start the activity
-                                Intent i = new Intent(MainActivity.this, QrCodeActivity.class);
-                                startActivityForResult(i, REQUEST_CODE_QR_SCAN);
+                                // Permission has already been granted, start the scanner
+                                launchQrScanner();
                             }
                         }
                         return true;
@@ -3240,19 +3308,8 @@ public class MainActivity extends AppCompatActivity
                         webView.loadUrl("javascript: var uuid = '" + uuid + "';");
                         return true;
                     } else if (url.startsWith("reset://")) {
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                            CookieManager.getInstance().removeAllCookies(null);
-                            CookieManager.getInstance().flush();
-                        } else if (mContext != null) {
-                            CookieSyncManager cookieSyncManager = CookieSyncManager.createInstance(mContext);
-                            cookieSyncManager.startSync();
-                            CookieManager cookieManager = CookieManager.getInstance();
-                            cookieManager.removeAllCookie();
-                            cookieManager.removeSessionCookie();
-                            cookieSyncManager.stopSync();
-                            cookieSyncManager.sync();
-                        }
+                        CookieManager.getInstance().removeAllCookies(null);
+                        CookieManager.getInstance().flush();
 
 
                         WebSettings webSettings = webView.getSettings();

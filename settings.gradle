@@ -1,1 +1,6 @@
-include ':app', ':inapp'
+// The legacy `inapp` (anjlab IAB v3) module is no longer wired in — the app
+// uses the official `com.android.billingclient:billing` directly. Add it back
+// here only if you bring its sources up to AndroidX + AGP 8.
+include ':app'
+
+rootProject.name = 'IBA-WebView'

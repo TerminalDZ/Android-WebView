@@ -14,12 +14,15 @@ import android.util.Log;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.iba.myappname.notifications.NotificationDatabase;
+import com.iba.myappname.notifications.StoredNotification;
 import com.pushwoosh.firebase.PushwooshFcmHelper;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import java.util.Map;
+import java.util.concurrent.Executors;
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
@@ -49,9 +52,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             sendNotification(remoteMessage.getNotification(), url, color);
+            persistToInbox(remoteMessage.getNotification(), url);
             if (BuildConfig.IS_DEBUG_MODE) Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
         }
 
+    }
+
+    private void persistToInbox(@NonNull RemoteMessage.Notification notification, @NonNull String url) {
+        final String title = notification.getTitle() == null ? "" : notification.getTitle();
+        final String body = notification.getBody() == null ? "" : notification.getBody();
+        final String deepLink = url.isEmpty() ? null : url;
+        final long ts = System.currentTimeMillis();
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                NotificationDatabase.get(getApplicationContext())
+                        .notificationDao()
+                        .insert(new StoredNotification(title, body, deepLink, ts));
+            } catch (Exception e) {
+                Log.w(TAG, "inbox insert failed", e);
+            }
+        });
     }
 
     @Override
