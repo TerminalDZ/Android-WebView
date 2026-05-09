@@ -141,7 +141,7 @@ dependencies {
     implementation 'com.pushwoosh:pushwoosh-firebase:6.7.16'
 
     // Google Play Services / Ads / Billing
-    implementation 'com.google.android.gms:play-services-ads:23.4.0'
+    implementation 'com.google.android.gms:play-services-ads:25.2.0'
     implementation 'com.google.android.gms:play-services-location:21.3.0'
     implementation 'com.android.billingclient:billing:7.1.1'
 
