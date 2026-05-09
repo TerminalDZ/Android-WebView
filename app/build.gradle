@@ -124,7 +124,7 @@ dependencies {
         implementation('androidx.lifecycle:lifecycle-common:2.6.2')
     }
     implementation 'androidx.security:security-crypto:1.1.0-alpha06'
-    implementation 'androidx.webkit:webkit:1.12.1'
+    implementation 'androidx.webkit:webkit:1.16.0'
 
     // Material 3
     implementation 'com.google.android.material:material:1.12.0'
